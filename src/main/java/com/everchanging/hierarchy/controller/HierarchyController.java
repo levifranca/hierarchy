@@ -1,0 +1,22 @@
+package com.everchanging.hierarchy.controller;
+
+import com.everchanging.hierarchy.dto.HierarchyTreeResponse;
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
+
+import javax.validation.Valid;
+import java.util.Map;
+
+@RestController
+public class HierarchyController {
+
+    @PostMapping(
+            path = "/hierarchy",
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public HierarchyTreeResponse hierarchy(@Valid @RequestBody Map<String, String> hierarchyRequest) {
+        return new HierarchyTreeResponse();
+    }
+}
