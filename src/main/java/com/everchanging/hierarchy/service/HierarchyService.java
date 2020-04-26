@@ -1,6 +1,5 @@
 package com.everchanging.hierarchy.service;
 
-import com.everchanging.hierarchy.converter.EmployeeToHierarchyMapConverter;
 import com.everchanging.hierarchy.model.Employee;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -13,9 +12,7 @@ import java.util.Objects;
 @Service
 public class HierarchyService {
 
-    private final EmployeeToHierarchyMapConverter employeeToHierarchyMapConverter;
-
-    public Map<String, Object> createHierarchy(Map<String, String> hierarchyRequest) {
+    public Employee computeHierarchy(Map<String, String> hierarchyRequest) {
         Map<String, Employee> employeesMap = new HashMap<>();
 
         for (Map.Entry<String, String> entry : hierarchyRequest.entrySet()) {
@@ -29,10 +26,8 @@ public class HierarchyService {
             subordinate.setSupervisor(supervisor);
         }
 
-        Employee rootEmployee = employeesMap.values().stream()
+        return employeesMap.values().stream()
                 .filter(employee -> Objects.isNull(employee.getSupervisor()))
                 .findFirst().orElse(null);
-
-        return employeeToHierarchyMapConverter.convert(rootEmployee);
     }
 }

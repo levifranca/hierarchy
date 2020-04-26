@@ -1,5 +1,6 @@
 package com.everchanging.hierarchy.controller;
 
+import com.everchanging.hierarchy.converter.EmployeeToHierarchyMapConverter;
 import com.everchanging.hierarchy.service.HierarchyService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
@@ -14,13 +15,16 @@ import java.util.Map;
 @RestController
 public class HierarchyController {
 
+    private final EmployeeToHierarchyMapConverter employeeToHierarchyMapConverter;
     private final HierarchyService hierarchyService;
 
     @PostMapping(
             path = "/hierarchy",
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public Map<String, Object> hierarchy(@Valid @RequestBody Map<String, String> hierarchyRequest) {
-        return hierarchyService.createHierarchy(hierarchyRequest);
+    public Map<String, Object> computeHierarchy(@Valid @RequestBody Map<String, String> hierarchyRequest) {
+        return employeeToHierarchyMapConverter.convert(
+                hierarchyService.computeHierarchy(hierarchyRequest)
+        );
     }
 }

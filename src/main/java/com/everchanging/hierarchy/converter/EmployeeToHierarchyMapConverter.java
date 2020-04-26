@@ -1,6 +1,7 @@
 package com.everchanging.hierarchy.converter;
 
 import com.everchanging.hierarchy.model.Employee;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Component;
 
@@ -10,6 +11,7 @@ import java.util.Set;
 
 import static java.util.stream.Collectors.toMap;
 
+@Slf4j
 @Component
 public class EmployeeToHierarchyMapConverter implements Converter<Employee, Map<String, Object>> {
     private static final Object EMPTY_OBJECT = new Object();
@@ -22,6 +24,7 @@ public class EmployeeToHierarchyMapConverter implements Converter<Employee, Map<
      */
     @Override
     public Map<String, Object> convert(@NotNull Employee employee) {
+        log.debug("Convert from top employee {} to hierarchy map", employee);
         return Map.of(employee.getName(), convertList(employee.getSubordinates()));
     }
 
