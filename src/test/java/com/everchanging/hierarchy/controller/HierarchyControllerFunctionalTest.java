@@ -50,6 +50,27 @@ class HierarchyControllerFunctionalTest {
 
     }
 
+    @Test
+    @DisplayName("Should return error on duplicate keys")
+    void testDuplicateKeys() throws Exception{
+
+        String requestBody = "{" +
+                "\"Adam\":\"Barbara\"," +
+                "\"Adam\":\"Charles\"," +
+            "}";
+
+        mockMvc.perform(post("/hierarchy")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestBody))
+                .andDo(print())
+                .andExpect(status().is4xxClientError())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("errors.size()", is(1)))
+                .andExpect(jsonPath("errors[0].name", is("DuplicatedKey")))
+                .andExpect(jsonPath("errors[0].message", startsWith("Duplicate field 'Adam'")));
+
+    }
+
     private static String toJson(Object obj) throws JsonProcessingException {
         ObjectMapper om = new ObjectMapper();
         return om.writeValueAsString(obj);

@@ -1,4 +1,7 @@
 
 spring:
-  jackson.serialization:
-    FAIL_ON_EMPTY_BEANS: false
+  jackson:
+    serialization:
+      FAIL_ON_EMPTY_BEANS: false
+    parser:
+      STRICT_DUPLICATE_DETECTION: true
