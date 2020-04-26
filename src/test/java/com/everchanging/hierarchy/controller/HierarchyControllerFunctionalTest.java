@@ -26,7 +26,7 @@ class HierarchyControllerFunctionalTest {
 
     @Test
     @DisplayName("Should return hierarchy given well-formed request")
-    void testSuccess() throws Exception{
+    void testSuccess() throws Exception {
 
         Map<String, String> requestBody = Map.of(
                 "Pete", "Nick",
@@ -52,7 +52,7 @@ class HierarchyControllerFunctionalTest {
 
     @Test
     @DisplayName("Should return error on duplicate keys")
-    void testDuplicateKeys() throws Exception{
+    void testDuplicateKeys() throws Exception {
 
         String requestBody = "{" +
                 "\"Adam\":\"Barbara\"," +
@@ -66,8 +66,28 @@ class HierarchyControllerFunctionalTest {
                 .andExpect(status().is4xxClientError())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("errors.size()", is(1)))
-                .andExpect(jsonPath("errors[0].name", is("DuplicatedKey")))
+                .andExpect(jsonPath("errors[0].name", is("InvalidJsonRequest")))
                 .andExpect(jsonPath("errors[0].message", startsWith("Duplicate field 'Adam'")));
+
+    }
+
+    @Test
+    @DisplayName("Should return error on malformed request")
+    void testMalformed() throws Exception {
+
+        String requestBody = "{" +
+                "\"Adam\":[\"Barbara\"," +
+                "}";
+
+        mockMvc.perform(post("/hierarchy")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestBody))
+                .andDo(print())
+                .andExpect(status().is4xxClientError())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("errors.size()", is(1)))
+                .andExpect(jsonPath("errors[0].name", is("InvalidJsonRequest")))
+                .andExpect(jsonPath("errors[0].message", startsWith("Cannot deserialize")));
 
     }
 
