@@ -35,7 +35,7 @@ public final class HierarchyControllerFunctionalTest {
 
     @Test
     @DisplayName("Should return hierarchy given well-formed request")
-    public void testSuccess() throws Exception {
+    public void testCreateHierarchy() throws Exception {
 
         Map<String, String> requestBody = Map.of(
                 "Pete", "Nick",

@@ -7,7 +7,7 @@ import java.util.List;
 
 public class HierarchyValidationException extends RuntimeException {
     @Getter
-    final transient List<ValidationError> validationErrors;
+    final List<ValidationError> validationErrors;
 
     public HierarchyValidationException(List<ValidationError> validationErrors) {
         super();

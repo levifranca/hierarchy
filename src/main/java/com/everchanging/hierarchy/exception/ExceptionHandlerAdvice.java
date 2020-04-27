@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 import java.util.List;
 
+import static java.lang.String.format;
+
 @ControllerAdvice
 public class ExceptionHandlerAdvice {
 
@@ -34,5 +36,14 @@ public class ExceptionHandlerAdvice {
     @ResponseBody
     public ValidationErrorResponse handleHierarchyValidation(HierarchyValidationException e) {
         return new ValidationErrorResponse(e.getValidationErrors());
+    }
+
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ExceptionHandler(EmployeeNotFoundException.class)
+    @ResponseBody
+    public ValidationErrorResponse handleEmployeeNotFound(EmployeeNotFoundException e) {
+        return new ValidationErrorResponse(List.of(
+                new ValidationError("EmployeeNotFound",
+                        format("Could not find employee with name = '%s'", e.getEmployeeName()))));
     }
 }
