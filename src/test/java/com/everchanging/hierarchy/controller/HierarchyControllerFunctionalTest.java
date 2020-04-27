@@ -19,7 +19,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @AutoConfigureMockMvc
 @SpringBootTest
-class HierarchyControllerFunctionalTest {
+public final class HierarchyControllerFunctionalTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -98,18 +98,22 @@ class HierarchyControllerFunctionalTest {
         Map<String, String> requestBody = Map.of(
                 "Barbara", "Adam",
                 "Carl", "Barbara",
-                "Adam", "Carl"
+                "Adam", "Carl",
+                "Xerxes", "Yasmin",
+                "Will", "Zeno"
         );
 
         mockMvc.perform(post("/hierarchy")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(toJson(requestBody)))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(toJson(requestBody)))
                 .andDo(print())
                 .andExpect(status().is4xxClientError())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("errors.size()", is(1)))
-                .andExpect(jsonPath("errors[0].name", is("HierarchyLoop")))
-                .andExpect(jsonPath("errors[0].message", startsWith("Found loop with the Employees: ")));
+                .andExpect(jsonPath("errors.size()", is(2)))
+                .andExpect(jsonPath("errors[*].name", containsInAnyOrder("HierarchyLoop", "HierarchyInvalidRoot")))
+                .andExpect(jsonPath("errors[*].message", containsInAnyOrder(
+                        startsWith("Found loop with the Employees:"),
+                        startsWith("Found 2 roots in the hierarchy. Roots employees are"))));
 
     }
 

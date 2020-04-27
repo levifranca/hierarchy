@@ -8,7 +8,7 @@ import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class EmployeeToHierarchyMapConverterTest {
+public final class EmployeeToHierarchyMapConverterTest {
 
     private final EmployeeToHierarchyMapConverter converter = new EmployeeToHierarchyMapConverter();
 

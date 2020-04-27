@@ -18,7 +18,7 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class HierarchyLoopValidatorTest {
+public final class HierarchyLoopValidatorTest {
     private static final ValidationError MOCK_VALIDATION_ERROR = new ValidationError("", "");
 
     @Mock

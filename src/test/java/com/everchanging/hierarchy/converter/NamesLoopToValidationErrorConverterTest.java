@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 
-class NamesLoopToValidationErrorConverterTest {
+public final class NamesLoopToValidationErrorConverterTest {
 
     private final NamesLoopToValidationErrorConverter converter = new NamesLoopToValidationErrorConverter();
 

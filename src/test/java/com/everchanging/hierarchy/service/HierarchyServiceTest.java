@@ -23,7 +23,7 @@ import static org.mockito.ArgumentMatchers.anySet;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 
-class HierarchyServiceTest {
+public final class HierarchyServiceTest {
 
     private final HierarchyValidator validator1 = mock(HierarchyValidator.class);
     private final HierarchyValidator validator2 = mock(HierarchyValidator.class);
