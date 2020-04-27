@@ -26,7 +26,7 @@ class HierarchyControllerFunctionalTest {
 
     @Test
     @DisplayName("Should return hierarchy given well-formed request")
-    void testSuccess() throws Exception {
+    public void testSuccess() throws Exception {
 
         Map<String, String> requestBody = Map.of(
                 "Pete", "Nick",
@@ -52,7 +52,7 @@ class HierarchyControllerFunctionalTest {
 
     @Test
     @DisplayName("Should return error on duplicate keys")
-    void testDuplicateKeys() throws Exception {
+    public void testDuplicateKeys() throws Exception {
 
         String requestBody = "{" +
                 "\"Adam\":\"Barbara\"," +
@@ -73,21 +73,43 @@ class HierarchyControllerFunctionalTest {
 
     @Test
     @DisplayName("Should return error on malformed request")
-    void testMalformed() throws Exception {
+    public void testMalformed() throws Exception {
 
         String requestBody = "{" +
                 "\"Adam\":[\"Barbara\"," +
                 "}";
 
         mockMvc.perform(post("/hierarchy")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(requestBody))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestBody))
                 .andDo(print())
                 .andExpect(status().is4xxClientError())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("errors.size()", is(1)))
                 .andExpect(jsonPath("errors[0].name", is("InvalidJsonRequest")))
                 .andExpect(jsonPath("errors[0].message", startsWith("Cannot deserialize")));
+
+    }
+
+    @Test
+    @DisplayName("Should return validation errors on invalid hierarchy")
+    public void testInvalidHierarchy() throws Exception {
+
+        Map<String, String> requestBody = Map.of(
+                "Barbara", "Adam",
+                "Carl", "Barbara",
+                "Adam", "Carl"
+        );
+
+        mockMvc.perform(post("/hierarchy")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(toJson(requestBody)))
+                .andDo(print())
+                .andExpect(status().is4xxClientError())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("errors.size()", is(1)))
+                .andExpect(jsonPath("errors[0].name", is("HierarchyLoop")))
+                .andExpect(jsonPath("errors[0].message", startsWith("Found loop with the Employees: ")));
 
     }
 

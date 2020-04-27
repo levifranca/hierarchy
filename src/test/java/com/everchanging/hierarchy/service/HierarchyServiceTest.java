@@ -1,8 +1,13 @@
 package com.everchanging.hierarchy.service;
 
 import com.everchanging.hierarchy.model.Employee;
+import com.everchanging.hierarchy.validator.HierarchyValidator;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Map;
 import java.util.Set;
@@ -11,10 +16,16 @@ import java.util.function.Function;
 import static java.util.stream.Collectors.toMap;
 import static java.util.stream.Collectors.toSet;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
+@ExtendWith(MockitoExtension.class)
 class HierarchyServiceTest {
 
-    private final HierarchyService service = new HierarchyService();
+    @Mock
+    private HierarchyValidator hierarchyValidator;
+
+    @InjectMocks
+    private HierarchyService service;
 
     @Test
     @DisplayName("Should compute employee's hierarchy successfully")
@@ -56,7 +67,63 @@ class HierarchyServiceTest {
         assertThat(barbara).isNotNull();
         assertThat(barbara.getSubordinates()).isEmpty();
     }
+/*
+    @Test
+    @DisplayName("Should detect single hierarchy loop")
+    public void testHierarchyLoop() {
+        // GIVEN
+        Map<String, String> employeesHierarchyListing = Map.of(
+                "Pete", "Nick",
+                "Nick", "Sophie",
+                "Barbara", "Sophie",
+                "Sophie", "Pete"
+        );
 
+        // WHEN
+        HierarchyValidationException exception = assertThrows(HierarchyValidationException.class,
+                () -> service.computeHierarchy(employeesHierarchyListing));
+
+        // THEN
+        assertThat(exception.getValidationErrors()).hasSize(1);
+        assertThat(exception.getValidationErrors().get(0).getName()).isEqualTo();
+        assertThat(exception.getValidationErrors().get(0).getName()).isEqualTo();
+    }
+
+    @Test
+    @DisplayName("Should detect multiple hierarchy loop")
+    public void testMultipleHierarchyLoop() {
+        // GIVEN
+        Map<String, String> employeesHierarchyListing = Map.of(
+                // loop 1
+                "Adam", "Barbara",
+                "Barbara", "Adam",
+                // loop 2
+                "Carl", "Diego",
+                "Diego", "Carl",
+
+                "Eve", "Fernando",
+                "Fernando", "Xerxes",
+                // loop 3
+                "Xerxes", "Yasmin",
+                "Yasmin", "Zeno",
+                "Zeno", "Xerxes"
+
+        );
+
+        // WHEN
+        HierarchyLoopException exception = assertThrows(HierarchyLoopException.class,
+                () -> service.computeHierarchy(employeesHierarchyListing));
+
+        // THEN
+        assertThat(exception.getEmployeeNameLoops()).hasSize(3);
+        assertThat(exception.getEmployeeNameLoops())
+                .filteredOnAssertions(list -> assertThat(list).contains("Adam", "Barbara", "Adam")).isNotEmpty();
+        assertThat(exception.getEmployeeNameLoops())
+                .filteredOnAssertions(list -> assertThat(list).contains("Diego", "Carl")).isNotEmpty();
+        assertThat(exception.getEmployeeNameLoops())
+                .filteredOnAssertions(list -> assertThat(list).contains("Xerxes", "Yasmin", "Zeno")).isNotEmpty();
+    }
+*/
     private void assertSubordinates(Employee employee, Set<String> expectedSubordinates) {
         Set<String> actualSubordinates = employee.getSubordinates().stream().map(Employee::getName).collect(toSet());
 

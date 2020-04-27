@@ -19,6 +19,7 @@ public class Employee {
     private Set<Employee> subordinates = new HashSet<>();
 
     public boolean addSubordinate(Employee employee) {
+        employee.setSupervisor(this);
         return subordinates.add(employee);
     }
 }

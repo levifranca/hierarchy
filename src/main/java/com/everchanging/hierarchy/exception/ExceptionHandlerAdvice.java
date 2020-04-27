@@ -28,4 +28,11 @@ public class ExceptionHandlerAdvice {
     public ValidationErrorResponse handleParseErrors(MismatchedInputException e) {
         return new ValidationErrorResponse(List.of(new ValidationError("InvalidJsonRequest", e.getMessage())));
     }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(HierarchyValidationException.class)
+    @ResponseBody
+    public ValidationErrorResponse handleHierarchyValidation(HierarchyValidationException e) {
+        return new ValidationErrorResponse(e.getValidationErrors());
+    }
 }
