@@ -8,9 +8,9 @@ import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public final class EmployeeToHierarchyMapConverterTest {
+public final class TopEmployeeToHierarchyMapConverterTest {
 
-    private final EmployeeToHierarchyMapConverter converter = new EmployeeToHierarchyMapConverter();
+    private final TopEmployeeToHierarchyMapConverter converter = new TopEmployeeToHierarchyMapConverter();
 
     @Test
     @DisplayName("Should convert employee into Hierarchy map")

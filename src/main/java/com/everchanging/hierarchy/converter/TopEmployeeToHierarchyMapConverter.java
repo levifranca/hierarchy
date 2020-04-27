@@ -13,19 +13,18 @@ import static java.util.stream.Collectors.toMap;
 
 @Slf4j
 @Component
-public class EmployeeToHierarchyMapConverter implements Converter<Employee, Map<String, Object>> {
+public class TopEmployeeToHierarchyMapConverter implements Converter<Employee, Map<String, Object>> {
     private static final Object EMPTY_OBJECT = new Object();
 
-    /**
-     * @param employee The root employee in the hierarchy (top level)
-     * @return A Map containing the Employee's hierarchy
-     * @throws StackOverflowError in case there are loops in the hierarchy
-     * (e.g. employee A supervises employee B and B supervises A.)
-     */
     @Override
-    public Map<String, Object> convert(@NotNull Employee employee) {
-        log.debug("Convert from top employee {} to hierarchy map", employee);
-        return Map.of(employee.getName(), convertList(employee.getSubordinates()));
+    public Map<String, Object> convert(@NotNull Employee topLevelEmployee) {
+        log.debug("Convert from top topLevelEmployee {} to hierarchy map", topLevelEmployee);
+        if (topLevelEmployee.getSupervisor() != null) {
+            log.error("Received a non-top topLevelEmployee to convert into hierarchy map. {}", topLevelEmployee);
+            throw new IllegalStateException();
+        }
+
+        return Map.of(topLevelEmployee.getName(), convertList(topLevelEmployee.getSubordinates()));
     }
 
     public Object convertList(Set<Employee> employees) {
