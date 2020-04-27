@@ -18,14 +18,14 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class HierarchyValidatorTest {
+class HierarchyLoopValidatorTest {
     private static final ValidationError MOCK_VALIDATION_ERROR = new ValidationError("", "");
 
     @Mock
     private NamesLoopToValidationErrorConverter converter;
 
     @InjectMocks
-    private HierarchyValidator validator;
+    private HierarchyLoopValidator validator;
 
     @Captor
     private ArgumentCaptor<ArrayList<String>> nameLoopsCaptor;

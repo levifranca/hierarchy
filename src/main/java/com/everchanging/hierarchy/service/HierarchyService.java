@@ -10,17 +10,21 @@ import org.springframework.stereotype.Service;
 
 import java.util.*;
 
+import static java.util.stream.Collectors.toList;
+
 @Slf4j
 @RequiredArgsConstructor
 @Service
 public class HierarchyService {
 
-    private final HierarchyValidator hierarchyValidator;
+    private final List<HierarchyValidator> hierarchyValidators;
 
     public Employee computeHierarchy(Map<String, String> hierarchyRequest) {
         Set<Employee> employees = resolveEmployees(hierarchyRequest);
 
-        List<ValidationError> validationErrors = hierarchyValidator.validate(employees);
+        List<ValidationError> validationErrors = hierarchyValidators.stream()
+                .map(validator -> validator.validate(employees))
+                .flatMap(List::stream).collect(toList());
 
         if (!validationErrors.isEmpty()) {
             log.debug("Validation errors {} found on list of employees {}", validationErrors, employees);
