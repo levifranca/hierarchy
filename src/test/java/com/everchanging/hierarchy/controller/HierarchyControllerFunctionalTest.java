@@ -1,5 +1,7 @@
 package com.everchanging.hierarchy.controller;
 
+import com.everchanging.hierarchy.entity.EmployeeEntity;
+import com.everchanging.hierarchy.repository.EmployeeRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
@@ -10,8 +12,12 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.List;
 import java.util.Map;
 
+import static java.util.function.Function.identity;
+import static java.util.stream.Collectors.toMap;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -23,6 +29,9 @@ public final class HierarchyControllerFunctionalTest {
 
     @Autowired
     private MockMvc mockMvc;
+
+    @Autowired
+    private EmployeeRepository repository;
 
     @Test
     @DisplayName("Should return hierarchy given well-formed request")
@@ -48,6 +57,19 @@ public final class HierarchyControllerFunctionalTest {
                 .andExpect(jsonPath("Jonas.Sophie.Nick.Pete.size()", is(0)))
                 .andExpect(jsonPath("Jonas.Sophie.Nick.Barbara.size()", is(0)));
 
+        List<EmployeeEntity> entities = repository.findAll();
+        assertThat(entities).hasSize(5);
+        Map<String, EmployeeEntity> entityToNameMap = entities.stream().collect(toMap(EmployeeEntity::getName, identity()));
+        EmployeeEntity jonas = entityToNameMap.get("Jonas");
+        assertThat(jonas).isEqualTo(new EmployeeEntity("Jonas", null));
+        EmployeeEntity sophie = entityToNameMap.get("Sophie");
+        assertThat(sophie).isEqualTo(new EmployeeEntity("Sophie", jonas));
+        EmployeeEntity nick = entityToNameMap.get("Nick");
+        assertThat(nick).isEqualTo(new EmployeeEntity("Nick", sophie));
+        EmployeeEntity pete = entityToNameMap.get("Pete");
+        assertThat(pete).isEqualTo(new EmployeeEntity("Pete", nick));
+        EmployeeEntity barbara = entityToNameMap.get("Barbara");
+        assertThat(barbara).isEqualTo(new EmployeeEntity("Barbara", nick));
     }
 
     @Test

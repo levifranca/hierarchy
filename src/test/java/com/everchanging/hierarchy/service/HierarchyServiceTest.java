@@ -21,18 +21,19 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.anySet;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.*;
 
 public final class HierarchyServiceTest {
 
     private final HierarchyValidator validator1 = mock(HierarchyValidator.class);
     private final HierarchyValidator validator2 = mock(HierarchyValidator.class);
+    private final EmployeeService employeeService = mock(EmployeeService.class);
 
     private HierarchyService service;
 
     @BeforeEach
     public void setup() {
-        service = new HierarchyService(asList(validator1, validator2));
+        service = new HierarchyService(asList(validator1, validator2), employeeService);
     }
 
     @Test
@@ -47,7 +48,7 @@ public final class HierarchyServiceTest {
         );
 
         // WHEN
-        Employee topLevelEmployee = service.computeHierarchy(employeesHierarchyListing);
+        Employee topLevelEmployee = service.computeAndSaveHierarchy(employeesHierarchyListing);
 
         // THEN
         assertThat(topLevelEmployee).isNotNull();
@@ -74,6 +75,8 @@ public final class HierarchyServiceTest {
         Employee barbara = subordinateMap.get("Barbara");
         assertThat(barbara).isNotNull();
         assertThat(barbara.getSubordinates()).isEmpty();
+
+        verify(employeeService).refreshHierarchy(topLevelEmployee);
     }
 
     @Test
@@ -93,12 +96,14 @@ public final class HierarchyServiceTest {
 
         // WHEN
         HierarchyValidationException hierarchyValidationException = assertThrows(HierarchyValidationException.class,
-                () -> service.computeHierarchy(employeesHierarchyListing));
+                () -> service.computeAndSaveHierarchy(employeesHierarchyListing));
 
         // THEN
         assertThat(hierarchyValidationException.getValidationErrors()).hasSize(3);
         assertThat(hierarchyValidationException.getValidationErrors())
                 .containsExactlyInAnyOrder(validationError1, validationError2, validationError3);
+
+        verifyNoInteractions(employeeService);
     }
 
     private void assertSubordinates(Employee employee, Set<String> expectedSubordinates) {

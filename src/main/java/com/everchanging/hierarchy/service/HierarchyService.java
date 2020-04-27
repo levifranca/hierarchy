@@ -18,8 +18,9 @@ import static java.util.stream.Collectors.toList;
 public class HierarchyService {
 
     private final List<HierarchyValidator> hierarchyValidators;
+    private final EmployeeService employeeService;
 
-    public Employee computeHierarchy(Map<String, String> hierarchyRequest) {
+    public Employee computeAndSaveHierarchy(Map<String, String> hierarchyRequest) {
         Set<Employee> employees = resolveEmployees(hierarchyRequest);
 
         List<ValidationError> validationErrors = hierarchyValidators.stream()
@@ -30,7 +31,15 @@ public class HierarchyService {
             log.debug("Validation errors {} found on list of employees {}", validationErrors, employees);
             throw new HierarchyValidationException(validationErrors);
         }
+        Employee topLevelEmployee = getTopLevelEmployee(employees);
 
+        employeeService.refreshHierarchy(topLevelEmployee);
+
+        return topLevelEmployee;
+    }
+
+    private Employee getTopLevelEmployee(Set<Employee> employees) {
+        // After validation it is safe there is only one employee without a supervisor
         return employees.stream()
                 .filter(employee -> Objects.isNull(employee.getSupervisor()))
                 .findFirst().orElse(null);

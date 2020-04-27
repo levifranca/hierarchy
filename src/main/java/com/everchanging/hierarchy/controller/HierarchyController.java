@@ -24,7 +24,7 @@ public class HierarchyController {
             produces = MediaType.APPLICATION_JSON_VALUE)
     public Map<String, Object> computeHierarchy(@Valid @RequestBody Map<String, String> hierarchyRequest) {
         return employeeToHierarchyMapConverter.convert(
-                hierarchyService.computeHierarchy(hierarchyRequest)
+                hierarchyService.computeAndSaveHierarchy(hierarchyRequest)
         );
     }
 }
