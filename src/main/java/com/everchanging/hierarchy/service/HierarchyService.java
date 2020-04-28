@@ -39,7 +39,7 @@ public class HierarchyService {
     }
 
     private Employee getTopLevelEmployee(Set<Employee> employees) {
-        // After validation it is safe there is only one employee without a supervisor
+        // After validation it is safe to say there is only one employee without a supervisor
         return employees.stream()
                 .filter(employee -> Objects.isNull(employee.getSupervisor()))
                 .findFirst().orElse(null);

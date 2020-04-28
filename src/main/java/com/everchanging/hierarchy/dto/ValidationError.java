@@ -1,6 +1,5 @@
 package com.everchanging.hierarchy.dto;
 
-import lombok.Data;
 import lombok.Value;
 
 @Value
