@@ -1,0 +1,10 @@
+
+spring:
+  datasource:
+    url: jdbc:h2:file:~/hierarchy_db
+    username: dbadmin
+    password: p4s$w0rd
+  jpa:
+    show-sql: false
+
+  h2.console.enabled: false
