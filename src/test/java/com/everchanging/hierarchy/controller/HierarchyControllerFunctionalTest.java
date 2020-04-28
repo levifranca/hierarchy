@@ -2,8 +2,6 @@ package com.everchanging.hierarchy.controller;
 
 import com.everchanging.hierarchy.entity.EmployeeEntity;
 import com.everchanging.hierarchy.repository.EmployeeRepository;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +13,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.util.List;
 import java.util.Map;
 
+import static com.everchanging.hierarchy.testutils.TestUtils.toJson;
+import static com.everchanging.hierarchy.testutils.TestUtils.withBasicAuth;
 import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.toMap;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -45,6 +45,7 @@ public final class HierarchyControllerFunctionalTest {
         );
 
         mockMvc.perform(post("/hierarchy")
+                        .headers(withBasicAuth())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(toJson(requestBody)))
                 .andDo(print())
@@ -82,6 +83,7 @@ public final class HierarchyControllerFunctionalTest {
             "}";
 
         mockMvc.perform(post("/hierarchy")
+                        .headers(withBasicAuth())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requestBody))
                 .andDo(print())
@@ -102,6 +104,7 @@ public final class HierarchyControllerFunctionalTest {
                 "}";
 
         mockMvc.perform(post("/hierarchy")
+                        .headers(withBasicAuth())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requestBody))
                 .andDo(print())
@@ -126,6 +129,7 @@ public final class HierarchyControllerFunctionalTest {
         );
 
         mockMvc.perform(post("/hierarchy")
+                        .headers(withBasicAuth())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(toJson(requestBody)))
                 .andDo(print())
@@ -139,9 +143,12 @@ public final class HierarchyControllerFunctionalTest {
 
     }
 
-    private static String toJson(Object obj) throws JsonProcessingException {
-        ObjectMapper om = new ObjectMapper();
-        return om.writeValueAsString(obj);
-    }
+    @Test
+    @DisplayName("Should respond 401 when auth data is not provided")
+    public void testUnauthorized() throws Exception {
 
+        mockMvc.perform(post("/hierarchy"))
+                .andExpect(status().isUnauthorized());
+
+    }
 }

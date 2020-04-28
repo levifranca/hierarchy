@@ -5,9 +5,10 @@ import lombok.Getter;
 public class EmployeeNotFoundException extends RuntimeException {
 
     @Getter
-    private String employeeName;
+    private final String employeeName;
 
     public EmployeeNotFoundException(String employeeName) {
+        super();
         this.employeeName = employeeName;
     }
 }

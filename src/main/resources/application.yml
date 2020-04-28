@@ -17,3 +17,8 @@ spring:
     show-sql: true
 
   h2.console.enabled: true
+
+  security:
+    user:
+      name: personia
+      password: password

@@ -12,6 +12,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.List;
 
+import static com.everchanging.hierarchy.testutils.TestUtils.withBasicAuth;
 import static org.hamcrest.Matchers.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -37,7 +38,8 @@ public final class EmployeeControllerFunctionalTest {
 
         String name = "Adam";
 
-        mockMvc.perform(get("/employees/{name}/supervisors", name))
+        mockMvc.perform(get("/employees/{name}/supervisors", name)
+                        .headers(withBasicAuth()))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -53,13 +55,25 @@ public final class EmployeeControllerFunctionalTest {
 
         String name = "zeno";
 
-        mockMvc.perform(get("/employees/{name}/supervisors", name))
+        mockMvc.perform(get("/employees/{name}/supervisors", name)
+                        .headers(withBasicAuth()))
                 .andDo(print())
                 .andExpect(status().isNotFound())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("errors.size()", is(1)))
                 .andExpect(jsonPath("errors[0].name", is("EmployeeNotFound")))
                 .andExpect(jsonPath("errors[0].message", is("Could not find employee with name = 'zeno'")));
+
+    }
+
+    @Test
+    @DisplayName("Should respond 401 when auth data is not provided")
+    public void testUnauthorized() throws Exception {
+
+        String name = "zeno";
+
+        mockMvc.perform(get("/employees/{name}/supervisors", name))
+                .andExpect(status().isUnauthorized());
 
     }
 
