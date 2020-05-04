@@ -6,10 +6,9 @@ import javax.persistence.*
 @Table(name = "employees")
 data class EmployeeEntity(
         @Id
-        var name: String?,
+        var name: String? = null,
         @OneToOne(
                 fetch = FetchType.LAZY // do not load all upper level employees
         )
-        private var supervisor: EmployeeEntity?) {
-    constructor() : this(name = null, supervisor = null)
+        private var supervisor: EmployeeEntity? = null) {
 }
