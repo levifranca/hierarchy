@@ -19,7 +19,6 @@ import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
@@ -42,7 +41,8 @@ public final class EmployeeServiceTest {
         Employee barbara = new Employee("Barbara");
         topLevelEmployee.addSubordinate(barbara);
 
-        List<EmployeeEntity> entities = asList(mock(EmployeeEntity.class), mock(EmployeeEntity.class));
+        EmployeeEntity adamEntity = new EmployeeEntity("Adam", null);
+        List<EmployeeEntity> entities = asList(adamEntity, new EmployeeEntity("Barbara", adamEntity));
         given(converter.convert(topLevelEmployee)).willReturn(entities);
 
         // WHEN
